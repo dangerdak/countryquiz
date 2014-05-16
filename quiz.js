@@ -1,27 +1,63 @@
 window.onload = function(){
 "use strict";
-	var countryName="Canada";
-	var countryOptions = {
-		"Canada": ["Toronto", "Ottowa", "Sydney", "London", "Brasil", "Accra", "Georgia", "Alberta"]};
-	quiz.injectCountry(countryName);
-	quiz.injectOptions(countryOptions[countryName], 4);
+	displayQuestion(1);
 };
 
-var quiz = {
+var inject = {
 	//Insert the name of the country which the question is about
-	injectCountry: function(countryName) {
+	country: function(questionNumber) {
 		"use strict";
 		var element = document.getElementById("country");
-		var country = document.createTextNode(countryName);
+		var country = document.createTextNode(questions[questionNumber].countryName);
 		element.appendChild(country);
 	},
 	//Insert the options available for a given country
-	injectOptions: function(listOptions, numberOfOptions) {
+	options: function(questionNumber) {
 		"use strict";
 		var elements = document.getElementsByClassName("options");
-		for(var i=0; i<numberOfOptions; i++) {
-			var option = document.createTextNode(listOptions[i]);
+		for(var i=0, len = questions.length; i<len; i++) {
+			var option = document.createTextNode(questions[questionNumber].options[i]);
 			elements[i].appendChild(option);
 		}
 	}
 };
+
+// Apply a question out of the array "questions"
+function displayQuestion(questionNumber) {
+	"use strict";
+	inject.country(questionNumber);	
+	inject.options(questionNumber);
+}
+
+
+// List of objects. Each object represents a country.
+var questions = 
+	[
+{
+	countryName: "Canada",
+	capital: "Ottawa",
+	options: ["Toronto", "London", "Ottawa", "Ontario"]
+},
+{
+	countryName: "Switzerland",
+	capital: "Bern",
+	options: ["Zurich", "Helsinki", "Basel", "Bern"]
+},
+{
+	countryName: "Latvia",
+	capital: "Riga",
+	options: ["Riga", "Vilnius", "Port Louis", "Tallin"]
+},
+{
+	countryName: "France",
+	capital: "Paris",
+	options: ["Versaille", "Paris", "Berlin", "Nice"]
+},
+{
+	countryName: "Ukraine",
+	capital: "Kiev",
+	options: ["Minsk", "Helsinki", "Kiev", "St Petersbourg"]
+}
+
+	];
+				
