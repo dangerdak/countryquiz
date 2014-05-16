@@ -1,44 +1,59 @@
 window.onload = function(){
 "use strict";
-	displayQuestion(0);
+	currentQuestion.display();
 };
 
-var inject = {
-	//Insert the name of the country which the question is about
-	country: function(questionNumber) {
-		"use strict";
-		var element = document.getElementById("country");
-		var country = document.createTextNode(questions[questionNumber].countryName);
-		element.appendChild(country);
-	},
-	//Insert the options available for a given country
-	options: function(questionNumber) {
-		"use strict";
-		var elements = document.getElementsByClassName("options");
-		for(var i=0, len = questions.length; i<len; i++) {
-			var option = document.createTextNode(questions[questionNumber].options[i]);
-			elements[i].appendChild(option);
-		}
-	},
-	//Display question number on page (input should be one greater than array index)
-	number: function(questionNumber) {
-		"use strict";
-		var element = document.getElementById("questionNumber");
-		var number = document.createTextNode(questionNumber + ". ");
-		element.appendChild(number);
 
+// Display, change and retrieve info from current question
+var currentQuestion = {
+	number: 0,
+	next: function() {
+		"use strict";
+		this.number += 1;
+	},
+	display: function() {
+		"use strict";
+		injectNumber(this.number +1);
+		injectCountry(this.number);
+		injectChoices(this.number);
+	},
+	get country() {
+		"use strict";
+		return questions[this.number].countryName;
+	}, 
+	get choices() {
+		"use strict";
+		return questions[this.number].choices;
 	}
-
 };
 
-// Apply a question out of the array "questions"
-function displayQuestion(questionNumber) {
+// For placing question info into HTML document
+//Insert the name of the country which the question is about
+function injectCountry(questionNumber) {
 	"use strict";
-	inject.number(questionNumber + 1);
-	inject.country(questionNumber);	
-	inject.options(questionNumber);
+	var element = document.getElementById("country");
+	var country = document.createTextNode(questions[questionNumber].countryName);
+	element.appendChild(country);
 }
 
+//Insert the choices available for a given country
+function injectChoices(questionNumber) {
+	"use strict";
+	var elements = document.getElementsByClassName("choices");
+	for(var i=0, len = questions.length; i<len; i++) {
+		var option = document.createTextNode(questions[questionNumber].choices[i]);
+		elements[i].appendChild(option);
+	}
+}
+
+//Display question number on page (input should be one greater than array index)
+function injectNumber(questionNumber) {
+	"use strict";
+	var element = document.getElementById("questionNumber");
+	var number = document.createTextNode(questionNumber + ". ");
+	element.appendChild(number);
+
+}
 
 // List of objects. Each object represents a country.
 var questions = 
@@ -46,27 +61,27 @@ var questions =
 {
 	countryName: "Canada",
 	capital: "Ottawa",
-	options: ["Toronto", "London", "Ottawa", "Ontario"]
+	choices: ["Toronto", "London", "Ottawa", "Ontario"]
 },
 {
 	countryName: "Switzerland",
 	capital: "Bern",
-	options: ["Zurich", "Helsinki", "Basel", "Bern"]
+	choices: ["Zurich", "Helsinki", "Basel", "Bern"]
 },
 {
 	countryName: "Latvia",
 	capital: "Riga",
-	options: ["Riga", "Vilnius", "Port Louis", "Tallin"]
+	choices: ["Riga", "Vilnius", "Port Louis", "Tallin"]
 },
 {
 	countryName: "France",
 	capital: "Paris",
-	options: ["Versaille", "Paris", "Berlin", "Nice"]
+	choices: ["Versaille", "Paris", "Berlin", "Nice"]
 },
 {
 	countryName: "Ukraine",
 	capital: "Kiev",
-	options: ["Minsk", "Helsinki", "Kiev", "St Petersbourg"]
+	choices: ["Minsk", "Helsinki", "Kiev", "St Petersbourg"]
 }
 
 	];
