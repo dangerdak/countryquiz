@@ -1,6 +1,6 @@
 window.onload = function(){
 "use strict";
-	displayQuestion(1);
+	displayQuestion(0);
 };
 
 var inject = {
@@ -19,12 +19,22 @@ var inject = {
 			var option = document.createTextNode(questions[questionNumber].options[i]);
 			elements[i].appendChild(option);
 		}
+	},
+	//Display question number on page (input should be one greater than array index)
+	number: function(questionNumber) {
+		"use strict";
+		var element = document.getElementById("questionNumber");
+		var number = document.createTextNode(questionNumber + ". ");
+		element.appendChild(number);
+
 	}
+
 };
 
 // Apply a question out of the array "questions"
 function displayQuestion(questionNumber) {
 	"use strict";
+	inject.number(questionNumber + 1);
 	inject.country(questionNumber);	
 	inject.options(questionNumber);
 }
