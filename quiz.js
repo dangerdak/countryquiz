@@ -40,14 +40,14 @@ var currentQuestion = questions[questionNumber];
 
 
 /****** DOM stuff ******/
-// Returns 3 objects in an array
+// Returns object of elements 
 function collectElements() {
 	"use strict";
 	var numberingElt = document.getElementById("questionNumber");
 	var countryElt = document.getElementById("country");
 	var optionsElts = document.getElementsByClassName("choices");
 
-	return [numberingElt, countryElt, optionsElts];
+	return {numbering: numberingElt, country: countryElt, options: optionsElts};
 }
 
 // Returns 3 textnodes in an array
@@ -59,17 +59,16 @@ function createText() {
 	for (var i = 0; i < questions.length; ++i) {
 		optionsText[i] = document.createTextNode(currentQuestion.options[i]);
 	}
-	return [numberingText, countryText, optionsText];
+	return {numbering: numberingText, country: countryText, options: optionsText};
 }
 
-// Takes 3 text nodes and 3 element objects
-function insertText(numberingText, countryText, optionsText, numberingElt, 
-		countryElt, optionsElts) {
+// Takes two objects
+function insertText(text, elements) {
 	"use strict";
-	numberingElt.appendChild(numberingText);
-	countryElt.appendChild(countryText);
-	for (var i = 0; i < optionsElts.length; ++i) {
-		optionsElts[i].appendChild(optionsText[i]);
+	elements.numbering.appendChild(text.numbering);
+	elements.country.appendChild(text.country);
+	for (var i = 0; i < elements.options.length; ++i) {
+		elements.options[i].appendChild(text.options[i]);
 	}
 }
 
@@ -77,6 +76,6 @@ window.onload = function() {
 	"use strict";
 	var elements = collectElements();
 	var text = createText();
-	insertText(text[0], text[1], text[2], elements[0], elements[1], elements[2]);
+	insertText(text, elements);
 
 };
