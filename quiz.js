@@ -4,87 +4,79 @@ var questions =
 	{
 		countryName: "Canada",
 		capital: "Ottawa",
-		choices: ["Toronto", "London", "Ottawa", "Ontario"],
+		options: ["Toronto", "London", "Ottawa", "Ontario"],
 		answer: 2
 	},
 	{
 		countryName: "Switzerland",
 		capital: "Bern",
-		choices: ["Zurich", "Helsinki", "Basel", "Bern"],
+		options: ["Zurich", "Helsinki", "Basel", "Bern"],
 		answer: 3
 	},
 	{
 		countryName: "Latvia",
 		capital: "Riga",
-		choices: ["Riga", "Vilnius", "Port Louis", "Tallin"],
+		options: ["Riga", "Vilnius", "Port Louis", "Tallin"],
 		answer: 0
 	},
 	{
 		countryName: "France",
 		capital: "Paris",
-		choices: ["Versaille", "Paris", "Berlin", "Nice"],
+		options: ["Versaille", "Paris", "Berlin", "Nice"],
 		answer: 1
 	},
 	{
 		countryName: "Ukraine",
 		capital: "Kiev",
-		choices: ["Minsk", "Helsinki", "Kiev", "St Petersbourg"],
+		options: ["Minsk", "Helsinki", "Kiev", "St Petersbourg"],
 		answer: 2
 	}
 
 ];
-	
-// For placing question info into HTML document
-// Insert the name of the country which the question is about
-function injectCountry(questionNumber) {
+
+/****** OH NO! Globals!*/
+var questionNumber = 0;
+var currentQuestion = questions[questionNumber];
+
+
+/****** DOM stuff ******/
+// Returns 3 objects in an array
+function collectElements() {
 	"use strict";
-	var element = document.getElementById("country");
-	var country = document.createTextNode(questions[questionNumber].countryName);
-	element.appendChild(country);
+	var numberingElt = document.getElementById("questionNumber");
+	var countryElt = document.getElementById("country");
+	var optionsElts = document.getElementsByClassName("choices");
+
+	return [numberingElt, countryElt, optionsElts];
 }
 
-//Insert the choices available for a given country
-function injectChoices(questionNumber) {
+// Returns 3 textnodes in an array
+function createText() {
 	"use strict";
-	var elements = document.getElementsByClassName("choices");
-	for (var i = 0, len = questions.length; i < len; ++i) {
-		var option = document.createTextNode(questions[questionNumber].choices[i]);
-		elements[i].appendChild(option);
-	} }
-
-//Display question number on page (input should be one greater than array index)
-function injectNumber(questionNumber) {
-	"use strict";
-	var element = document.getElementById("questionNumber");
-	var number = document.createTextNode(questionNumber + ". ");
-	element.appendChild(number);
-
-}
-
-// Display, change and retrieve info from current question
-var currentQuestion = {
-	number: 0,
-	next: function() {
-		"use strict";
-		this.number += 1;
-	},
-	display: function() {
-		"use strict";
-		injectNumber(this.number +1);
-		injectCountry(this.number);
-		injectChoices(this.number);
-	},
-	get country() {
-		"use strict";
-		return questions[this.number].countryName;
-	}, 
-	get choices() {
-		"use strict";
-		return questions[this.number].choices;
+	var numberingText = document.createTextNode(questionNumber + 1 + ". ");
+	var countryText = document.createTextNode(currentQuestion.countryName);
+	var optionsText = [];
+	for (var i = 0; i < questions.length; ++i) {
+		optionsText[i] = document.createTextNode(currentQuestion.options[i]);
 	}
-};
+	return [numberingText, countryText, optionsText];
+}
 
-window.onload = function(){
-"use strict";
-	currentQuestion.display();
+// Takes 3 text nodes and 3 element objects
+function insertText(numberingText, countryText, optionsText, numberingElt, 
+		countryElt, optionsElts) {
+	"use strict";
+	numberingElt.appendChild(numberingText);
+	countryElt.appendChild(countryText);
+	for (var i = 0; i < optionsElts.length; ++i) {
+		optionsElts[i].appendChild(optionsText[i]);
+	}
+}
+
+window.onload = function() {
+	"use strict";
+	var elements = collectElements();
+	var text = createText();
+	insertText(text[0], text[1], text[2], elements[0], elements[1], elements[2]);
+
 };
