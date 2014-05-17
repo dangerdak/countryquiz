@@ -1,36 +1,41 @@
 // List of objects. Each object represents a country.
 var questions = 
-	[
-{
-	countryName: "Canada",
-	capital: "Ottawa",
-	choices: ["Toronto", "London", "Ottawa", "Ontario"]
-},
-{
-	countryName: "Switzerland",
-	capital: "Bern",
-	choices: ["Zurich", "Helsinki", "Basel", "Bern"]
-},
-{
-	countryName: "Latvia",
-	capital: "Riga",
-	choices: ["Riga", "Vilnius", "Port Louis", "Tallin"]
-},
-{
-	countryName: "France",
-	capital: "Paris",
-	choices: ["Versaille", "Paris", "Berlin", "Nice"]
-},
-{
-	countryName: "Ukraine",
-	capital: "Kiev",
-	choices: ["Minsk", "Helsinki", "Kiev", "St Petersbourg"]
-}
+[
+	{
+		countryName: "Canada",
+		capital: "Ottawa",
+		choices: ["Toronto", "London", "Ottawa", "Ontario"],
+		answer: 2
+	},
+	{
+		countryName: "Switzerland",
+		capital: "Bern",
+		choices: ["Zurich", "Helsinki", "Basel", "Bern"],
+		answer: 3
+	},
+	{
+		countryName: "Latvia",
+		capital: "Riga",
+		choices: ["Riga", "Vilnius", "Port Louis", "Tallin"],
+		answer: 0
+	},
+	{
+		countryName: "France",
+		capital: "Paris",
+		choices: ["Versaille", "Paris", "Berlin", "Nice"],
+		answer: 1
+	},
+	{
+		countryName: "Ukraine",
+		capital: "Kiev",
+		choices: ["Minsk", "Helsinki", "Kiev", "St Petersbourg"],
+		answer: 2
+	}
 
-	];
+];
 	
 // For placing question info into HTML document
-//Insert the name of the country which the question is about
+// Insert the name of the country which the question is about
 function injectCountry(questionNumber) {
 	"use strict";
 	var element = document.getElementById("country");
@@ -42,11 +47,10 @@ function injectCountry(questionNumber) {
 function injectChoices(questionNumber) {
 	"use strict";
 	var elements = document.getElementsByClassName("choices");
-	for(var i=0, len = questions.length; i<len; i++) {
+	for (var i = 0, len = questions.length; i < len; ++i) {
 		var option = document.createTextNode(questions[questionNumber].choices[i]);
 		elements[i].appendChild(option);
-	}
-}
+	} }
 
 //Display question number on page (input should be one greater than array index)
 function injectNumber(questionNumber) {
@@ -79,7 +83,7 @@ var currentQuestion = {
 		return questions[this.number].choices;
 	}
 };
-	
+
 window.onload = function(){
 "use strict";
 	currentQuestion.display();
