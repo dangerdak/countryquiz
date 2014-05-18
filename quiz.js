@@ -72,12 +72,17 @@ function insertText(text, elements) {
 	}
 }
 
-function updateQuestion(text, elements) {
+function updateQuestion() {
 	"use strict";
 	questionNumber += 1;
-	var newText = document.createTextNode(questionNumber + 1 +". ");
-	var parentNode = document.getElementById("questionNumber");
-	parentNode.replaceChild(newText, parentNode.firstChild);
+	currentQuestion = questions[questionNumber];
+	var text = createText();
+	var elements = collectElements();
+	elements.numbering.replaceChild(text.numbering, elements.numbering.firstChild);
+	elements.country.replaceChild(text.country, elements.country.firstChild);
+	for (var i = 0; i < elements.options.length; ++i) {
+		elements.options[i].replaceChild(text.options[i], elements.options[i].lastChild);
+	}
 }
 
 window.onload = function() {
