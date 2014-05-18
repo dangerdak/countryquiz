@@ -77,5 +77,4 @@ window.onload = function() {
 	var elements = collectElements();
 	var text = createText();
 	insertText(text, elements);
-
 };
