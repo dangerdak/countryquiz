@@ -72,9 +72,19 @@ function insertText(text, elements) {
 	}
 }
 
+function updateQuestion(text, elements) {
+	"use strict";
+	questionNumber += 1;
+	var newText = document.createTextNode(questionNumber + 1 +". ");
+	var parentNode = document.getElementById("questionNumber");
+	parentNode.replaceChild(newText, parentNode.firstChild);
+}
+
 window.onload = function() {
 	"use strict";
 	var elements = collectElements();
 	var text = createText();
 	insertText(text, elements);
+	var button = document.getElementById("next");
+	button.onclick = updateQuestion;
 };
