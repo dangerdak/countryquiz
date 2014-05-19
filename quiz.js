@@ -38,6 +38,7 @@ var questions =
 var questionNumber = 0;
 var currentQuestion = questions[questionNumber];
 var score = 0;
+var correctAnswers = [];
 
 
 /****** Other stuff ******/
@@ -83,9 +84,11 @@ function showResults() {
 	// Update score to include final answer
 	updateScore();
 	// Insert user score
-	var scoreText = document.createTextNode(score);
+	var scoreText = document.createTextNode(score + "/" + questions.length);
 	scoreElt.appendChild(scoreText);
 
+	// Insert answers table
+	showAnswers();
 	// Hide quiz area and show results area
 	quizElt.style.display = "none";
 	resultsElt.style.display = "block";
@@ -154,6 +157,10 @@ function updateScore() {
 	"use strict";
 	if (userAnswer() === currentQuestion.answer) {
 		score += 1;
+		correctAnswers.push(true);
+	}
+	else {
+		correctAnswers.push(false);
 	}
 }
 
@@ -162,6 +169,41 @@ function update() {
 	"use strict";
 	updateScore();
 	updateQuestion();
+}
+
+// Put correct answers in HTML table
+function showAnswers() {
+	"use strict";
+	var rowElt;
+	var allRows;
+	var capitalElt, countryElt;
+	var capitalNode, countryNode;
+	var tableElt = document.getElementById("answers");
+	for (var row = 0; row < questions.length; ++row) {
+		rowElt = document.createElement("tr");
+		rowElt.className = "answerRows";
+		countryElt = document.createElement("td");
+		capitalElt = document.createElement("td");
+
+		countryNode = document.createTextNode(questions[row].countryName);
+		capitalNode = document.createTextNode(questions[row].options[questions[row].answer]);
+
+		countryElt.appendChild(countryNode);
+		capitalElt.appendChild(capitalNode);
+
+		rowElt.appendChild(countryElt);
+		rowElt.appendChild(capitalElt);
+		tableElt.appendChild(rowElt);
+	}
+	allRows = document.getElementsByClassName("answerRows");
+		for (var j = 0; j < correctAnswers.length; ++j) {
+			if (correctAnswers[j]) {
+				allRows[j].style.color = "green";
+			}
+			else {
+				allRows[j].style.color = "red";
+			}
+		}
 }
 
 window.onload = function() {
