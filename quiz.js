@@ -118,6 +118,12 @@ function updateQuestion() {
 	var text = createText();
 	var elements = collectElements();
 	var button = document.getElementById("next");
+	var radios = document.getElementsByClassName("choiceButton");
+
+	// Start each question with all radio buttons unchecked
+	for (var j = 0; j < radios.length; ++j) {
+		radios[j].checked = false;
+	}
 
 	// Update content
 	elements.numbering.replaceChild(text.numbering, elements.numbering.firstChild);
@@ -135,9 +141,9 @@ function updateQuestion() {
 // Returns index of users answer
 function userAnswer() {
 	"use strict";
-	var optionsElts = document.getElementsByClassName("choiceButton");
-	for (var i = 0; i < optionsElts.length; i++) {
-		if (optionsElts[i].checked) {
+	var radioElts = document.getElementsByClassName("choiceButton");
+	for (var i = 0; i < radioElts.length; i++) {
+		if (radioElts[i].checked) {
 			return i;
 		}
 	}
