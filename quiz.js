@@ -37,9 +37,10 @@ var questions =
 /****** OH NO! Globals!*/
 var questionNumber = 0;
 var currentQuestion = questions[questionNumber];
+var score = 0;
 
 
-/****** DOM stuff ******/
+/****** Other stuff ******/
 // Returns object of elements 
 function collectElements() {
 	"use strict";
@@ -72,12 +73,47 @@ function insertText(text, elements) {
 	}
 }
 
-// Increases question number and updates content
+// Show final page
+function showResults() {
+	"use strict";
+	var resultsElt = document.getElementById("resultsArea");
+	var quizElt = document.getElementById("quizArea");
+	var scoreElt = document.getElementById("finalScore");
+
+	// Update score to include final answer
+	updateScore();
+	// Insert user score
+	var scoreText = document.createTextNode(score);
+	scoreElt.appendChild(scoreText);
+
+	// Hide quiz area and show results area
+	quizElt.style.display = "none";
+	resultsElt.style.display = "block";
+}
+
+// Check if end of quiz
+function finalQuestion() {
+	"use strict";
+	var current = questionNumber+1;
+	var length = questions.length;
+	if (current === length) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+// Increases question number
+// Updates variable "currentQuestion"
+// Updates content displayed on page
+// (including replacing last question with results)
 function updateQuestion() {
 	"use strict";
 	// Update globals
 	questionNumber += 1;
 	currentQuestion = questions[questionNumber];
+
 	// Find elements whose content needs updating
 	var text = createText();
 	var elements = collectElements();
@@ -96,29 +132,30 @@ function updateQuestion() {
 	}
 }
 
-// Check if end of quiz
-function finalQuestion() {
+// Returns index of users answer
+function userAnswer() {
 	"use strict";
-	var current = questionNumber+1;
-	var length = questions.length;
-	if (current === length) {
-		return true;
-	}
-	else {
-		return false;
+	var optionsElts = document.getElementsByClassName("choiceButton");
+	for (var i = 0; i < optionsElts.length; i++) {
+		if (optionsElts[i].checked) {
+			return i;
+		}
 	}
 }
 
-// Show final page
-// Remove quiz area and replace with results area
-function showResults() {
+// Increment user's score if they were correct
+function updateScore() {
 	"use strict";
-	var resultsElt = document.getElementById("resultsArea");
-	var quizElt = document.getElementById("quizArea");
+	if (userAnswer() === currentQuestion.answer) {
+		score += 1;
+	}
+}
 
-	quizElt.style.display = "none";
-	resultsElt.style.display = "block";
-
+// Update user score and displayed question
+function update() {
+	"use strict";
+	updateScore();
+	updateQuestion();
 }
 
 window.onload = function() {
@@ -126,6 +163,5 @@ window.onload = function() {
 	var elements = collectElements();
 	var text = createText();
 	insertText(text, elements);
-	var button = document.getElementById("next");
-	button.onclick = updateQuestion;
+	document.getElementById("next").onclick = update;
 };
