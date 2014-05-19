@@ -72,17 +72,53 @@ function insertText(text, elements) {
 	}
 }
 
+// Increases question number and updates content
 function updateQuestion() {
 	"use strict";
+	// Update globals
 	questionNumber += 1;
 	currentQuestion = questions[questionNumber];
+	// Find elements whose content needs updating
 	var text = createText();
 	var elements = collectElements();
+	var button = document.getElementById("next");
+
+	// Update content
 	elements.numbering.replaceChild(text.numbering, elements.numbering.firstChild);
 	elements.country.replaceChild(text.country, elements.country.firstChild);
 	for (var i = 0; i < elements.options.length; ++i) {
 		elements.options[i].replaceChild(text.options[i], elements.options[i].lastChild);
 	}
+	// For final question, change button value to "Submit Answers" and change event
+	if (finalQuestion()) {
+		button.value="Submit Answers";
+		button.onclick = showResults;
+	}
+}
+
+// Check if end of quiz
+function finalQuestion() {
+	"use strict";
+	var current = questionNumber+1;
+	var length = questions.length;
+	if (current === length) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+// Show final page
+// Remove quiz area and replace with results area
+function showResults() {
+	"use strict";
+	var resultsElt = document.getElementById("resultsArea");
+	var quizElt = document.getElementById("quizArea");
+
+	quizElt.style.display = "none";
+	resultsElt.style.display = "block";
+
 }
 
 window.onload = function() {
