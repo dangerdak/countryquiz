@@ -206,8 +206,46 @@ function showAnswers() {
 		}
 }
 
+
+function AJAX_JSON_Req( url )
+{
+    var AJAX_req = new XMLHttpRequest();
+    AJAX_req.open( "GET", url, true );
+    AJAX_req.setRequestHeader("Content-type", "application/json");
+ 
+    AJAX_req.onreadystatechange = function()
+    {
+        if( AJAX_req.readyState == 4 && AJAX_req.status == 200 )
+        {
+            var response = JSON.parse( AJAX_req.responseText );
+			generateQuestions(response);
+        }
+    }
+    AJAX_req.send();
+}
+
+// Generate questions from response to ajax request
+function generateQuestions(response) {
+	"use strict";
+	var randomIndex;
+	var totalCountries = response.length;
+	var howMany = 5;
+	var countries = [];
+	for (var i = 0; i < howMany; ++i) {
+		// Each index is a random number from zero to number of countries -1
+		randomIndex =  Math.floor(Math.random() * totalCountries);
+		countries[i] = response[randomIndex];
+
+		// Set questions based on randomly chosen countries
+		questions[i].capital = countries[i].capital;
+		questions[i].countryName = countries[i].name;
+	}
+	
+}
+
 window.onload = function() {
 	"use strict";
+	AJAX_JSON_Req( 'countries.json' );
 	var elements = collectElements();
 	var text = createText();
 	insertText(text, elements);
