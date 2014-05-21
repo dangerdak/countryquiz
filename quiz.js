@@ -91,30 +91,44 @@ var question = {
 	// (The event object will then become "this")
 	next: function() {
 		"use strict";
-		var optionsElt;
 		var warningElt = document.getElementById("warning");
 		// Clear warning
 		warningElt.textContent = "";
 		// Only update question if an answer had been chosen
 		// (Except for initial insertion of question)
-		if (userAnswer() !== null || question.number === 0) {
-			results.userAnswers[i] = userAnswer();
-			document.getElementById("country").textContent = quiz.questions[question.number].country;
-			for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
-				optionsElt = document.getElementsByClassName("choices")[i];
-				optionsElt.textContent = quiz.questions[question.number].options[i];
-				// Uncheck radio button
-				optionsElt.previousElementSibling.checked=false;
-			}
-			// Displays question number after incrementing it
-			// (As it should be one greater than the index)
-			document.getElementById("questionNumber").textContent = ++question.number + ". ";
-		} else {
+			if (userAnswer() !== null || question.number === 0) {
+			// If question is final one, display results instead of update
+				update();
+			} else {
 			warningElt.textContent = "Please select an answer before continuing!";
 		}
 	}
 
 };
+
+function update() {
+	"use strict";
+	var optionsElt;
+	var buttonElt;
+	results.userAnswers[i] = userAnswer();
+	document.getElementById("country").textContent = quiz.questions[question.number].country;
+	for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
+		optionsElt = document.getElementsByClassName("choices")[i];
+		optionsElt.textContent = quiz.questions[question.number].options[i];
+		// Uncheck radio button
+		optionsElt.previousElementSibling.checked=false;
+	}
+	// Displays question number after incrementing it
+	// (As it should be one greater than the index)
+	document.getElementById("questionNumber").textContent = ++question.number + ". ";
+	if (question.number === quiz.howManyQuestions) {
+		buttonElt = document.getElementById("next");
+		buttonElt.value = "Results";
+	} else if (question.number ===quiz.howManyQuestions+1) {
+		buttonElt.onclick = results.show;
+	}
+}
+	
 
 var results = {
 	userAnswers: [],
@@ -155,10 +169,7 @@ function userAnswer() {
 // Returns true if question is the last
 function finalQuestion() {
 	"use strict";
-	var resultsButton = document.getElementById("next");
-	if (question.number === quiz.questions.length) {
-		resultsButton.value = "Results";
-		resultsButton.onclick = results.show;
+	if (question.number === quiz.howManyQuestions) {
 		return true;
 	} else {
 	return false;
