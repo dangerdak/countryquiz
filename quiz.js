@@ -1,12 +1,33 @@
+// AJAX request for country data in file at url
+function fetchData(url, responseHandler) {
+	"use strict";
+    var request = new XMLHttpRequest();
+    request.open( "GET", url, true );
+    request.setRequestHeader("Content-type", "application/json");
+    request.onreadystatechange = function() {
+		if (request.readyState === 4 && request.status === 200) {
+			responseHandler(request.responseText);
+			question.next();
+		}
+	};
+    request.send();
+}
+
+function parseJSONResponse(responseText) {
+	"use strict";
+		// Put all country data in a global variable
+		var allCountries = JSON.parse(responseText);
+		quiz.generate(allCountries);
+}
 
 // Generate all quiz questions using response to ajax request
-//function generateQuiz(allCountries, howManyQuestions, howManyOptions) {
 var quiz = {
 	howManyQuestions: 5,
 	howManyOptions: 4,
 
 	answers: [],
 	questions: [],
+	currentQuestion: 0,
 
 	generate: function(allCountries) {
 		"use strict";
@@ -40,42 +61,72 @@ var quiz = {
 					if (j === answerIndex) {
 						this.questions[i].options[j] = countryToUse.capital;
 					} else {
+						// Ensure capital property exists on this country
+						do {
 						randomCountry = allCountries[Math.floor(Math.random() * totalCountries)];
 						this.questions[i].options[j] = randomCountry.capital;
+						}
+						while (!capital(randomCountry)); 
 					}
 				}
 		}
 	}
 };
 
-// AJAX request for country data in file at url
-function fetchData(url, responseHandler) {
-    var request = new XMLHttpRequest();
-    request.open( "GET", url, true );
-    request.setRequestHeader("Content-type", "application/json");
-    request.onreadystatechange = function() {
-		if (request.readyState === 4 && request.status === 200) {
-			responseHandler(request.responseText);
+// Check if capital property is present
+function capital(country) {
+	"use strict";
+	if (country.capital.length > 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+// Information for updating question
+var question = {
+	number: 0,
+	userAnswers: [],
+
+	// Can't use "this" keyword as method will be invoked on an event handler
+	// (The event object will then become "this")
+	next: function() {
+		"use strict";
+		// Only update question if an answer had been chosen
+		// (Except for initial insertion of question)
+		if (userAnswer() || question.number === 0) {
+			question.userAnswers[i] = userAnswer();
+			var labelElt;
+			document.getElementById("country").textContent = quiz.questions[question.number].country;
+			for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
+				labelElt = document.getElementsByClassName("choices")[i];
+				labelElt.textContent = quiz.questions[question.number].options[i];
+				// Uncheck radio button
+				labelElt.previousElementSibling.checked=false;
+			}
+			// Displays question number after incrementing it
+			// (As it should be one greater than the index)
+			document.getElementById("questionNumber").textContent = ++question.number + ". ";
+		} else {
+			alert("Please select an answer before continuing");
 		}
-	};
-    request.send();
+	}
+};
+
+// Part of event handler, so "this" refers to event object
+function userAnswer() {
+	"use strict";
+	var buttons = document.getElementsByClassName("choiceButton");
+	for (var i = 0; i < buttons.length; ++i) {
+		if (buttons[i].checked) {
+			return i;
+		}
+	}
+	return null;
 }
-
-function parseResponse(responseText) {
-		// Put all country data in a global variable
-		var allCountries = JSON.parse(responseText);
-		quiz.generate(allCountries);
-}
-
-
-//// Update question
-//function updateQuestion(number) {
-//	// If on final question, show results page
-//	if (number === questions.length
-//
-//}
 
 window.onload = function() {
 	"use strict";
-	fetchData('countries.json', parseResponse);
+	fetchData('countries.json', parseJSONResponse);
+	document.getElementById("next").onclick = question.next;
 };
