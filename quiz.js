@@ -1,29 +1,41 @@
-function AJAX_JSON_Req( url ) {
-    var AJAX_req = new XMLHttpRequest();
-    AJAX_req.open( "GET", url, true );
-    AJAX_req.setRequestHeader("Content-type", "application/json");
- 
-    AJAX_req.onreadystatechange = function() {
-        if(AJAX_req.readyState == 4 && AJAX_req.status == 200) {
-            var response = JSON.parse(AJAX_req.responseText);
-			generateQuestions(response);
-        }
-    }
-    AJAX_req.send();
+var quiz = [];
+
+// AJAX request for country data in file at url
+function fetchData(url, responseHandler) {
+    var request = new XMLHttpRequest();
+    request.open( "GET", url, true );
+    request.setRequestHeader("Content-type", "application/json");
+    request.onreadystatechange = function() {
+		if (request.readyState === 4 && request.status === 200) {
+			responseHandler(request.responseText);
+		}
+	};
+    request.send();
 }
 
-// Generate questions using response to ajax request
-function generateQuestions(response) {
+function parseResponse(responseText) {
+		// Put all country data in a global variable
+		var allCountries = JSON.parse(responseText);
+		quiz = generateQuiz(allCountries);
+}
+
+// Generate all quiz questions using response to ajax request
+function generateQuiz(allCountries, howManyQuestions, howManyOptions) {
 	"use strict";
-	var howManyQuestions = 5;
-	var howManyOptions = 4;
-	var totalCountries = response.length;
+
+	// Set default values
+	howManyQuestions = howManyQuestions || 5;
+	howManyOptions = howManyOptions || 4;
+
+	var totalCountries = allCountries.length;
 	var countriesToUse = [];
 	var options = [];
 	var questions = [];
 	var countryIndex;
 	var answerIndex;
 	var answerIndices = [];
+
+
 	for (var i = 0; i < howManyQuestions; ++i) {
 		// Each array element will contain an object with info about a country
 		questions[i] = {};
@@ -34,21 +46,21 @@ function generateQuestions(response) {
 
 		// Generate random indices to select countries from JSON file
 		countryIndex =  Math.floor(Math.random() * totalCountries);
-		countriesToUse[i] = response[countryIndex];
+		countriesToUse[i] = allCountries[countryIndex];
 
 		// Set questions based on randomly chosen countries
 		questions[i].country = countriesToUse[i].name;
 
-		// Generate random options
+		// Generate random options (capital cities)
 		// And include answer among them
-		for (var j = 0; j < howManyOptions; ++j) {
-			// Insert answer at chosen index
-			if (j === answerIndex) {
-				options[j] = countriesToUse[i].capital;
-			} else {
-				options[j] = response[Math.floor(Math.random() * totalCountries)].capital;
+			for (var j = 0; j < howManyOptions; ++j) {
+				// Insert answer at chosen index
+				if (j === answerIndex) {
+					options[j] = countriesToUse[i].capital;
+				} else {
+					options[j] = allCountries[Math.floor(Math.random() * totalCountries)].capital;
+				}
 			}
-		}
 		questions[i].options = options;
 	}
 	return {questions: questions, answers: answerIndices};
@@ -56,5 +68,5 @@ function generateQuestions(response) {
 
 window.onload = function() {
 	"use strict";
-	AJAX_JSON_Req('countries.json');
+	fetchData('countries.json', parseResponse);
 };
