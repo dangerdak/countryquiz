@@ -92,9 +92,12 @@ var question = {
 	// (The event object will then become "this")
 	next: function() {
 		"use strict";
+		var warningElt = document.getElementById("warning");
+		// Clear warning
+		warningElt.textContent = "";
 		// Only update question if an answer had been chosen
 		// (Except for initial insertion of question)
-		if (userAnswer() || question.number === 0) {
+		if (userAnswer() !== null || question.number === 0) {
 			question.userAnswers[i] = userAnswer();
 			var labelElt;
 			document.getElementById("country").textContent = quiz.questions[question.number].country;
@@ -108,7 +111,7 @@ var question = {
 			// (As it should be one greater than the index)
 			document.getElementById("questionNumber").textContent = ++question.number + ". ";
 		} else {
-			alert("Please select an answer before continuing");
+			warningElt.textContent = "Please select an answer before continuing!";
 		}
 	}
 };
