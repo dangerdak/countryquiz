@@ -1,4 +1,52 @@
-var quiz = [];
+
+// Generate all quiz questions using response to ajax request
+//function generateQuiz(allCountries, howManyQuestions, howManyOptions) {
+var quiz = {
+	howManyQuestions: 5,
+	howManyOptions: 4,
+
+	answers: [],
+	questions: [],
+
+	generate: function(allCountries) {
+		"use strict";
+
+		var totalCountries = allCountries.length;
+		var countryToUse;
+		var countryIndex;
+		var answerIndex;
+		var randomCountry;
+
+		for (var i = 0; i < this.howManyQuestions; ++i) {
+			// Each array element will contain an object with info about a country
+			this.questions[i] = {};
+			this.questions[i].options = [];
+			// Generate random indices to decide locations of answers within options
+			answerIndex = Math.floor(Math.random() * this.howManyOptions);
+			// Remember indices of the correct answers
+			this.answers.push(answerIndex);
+
+			// Generate random index to select country from JSON file
+			countryIndex =  Math.floor(Math.random() * totalCountries);
+			countryToUse = allCountries[countryIndex];
+
+			// Set questions based on randomly chosen countries
+			this.questions[i].country = countryToUse.name;
+
+			// Generate random options (capital cities)
+			// And include answer among them
+				for (var j = 0; j < this.howManyOptions; ++j) {
+					// Insert answer at chosen index
+					if (j === answerIndex) {
+						this.questions[i].options[j] = countryToUse.capital;
+					} else {
+						randomCountry = allCountries[Math.floor(Math.random() * totalCountries)];
+						this.questions[i].options[j] = randomCountry.capital;
+					}
+				}
+		}
+	}
+};
 
 // AJAX request for country data in file at url
 function fetchData(url, responseHandler) {
@@ -16,55 +64,16 @@ function fetchData(url, responseHandler) {
 function parseResponse(responseText) {
 		// Put all country data in a global variable
 		var allCountries = JSON.parse(responseText);
-		quiz = generateQuiz(allCountries);
+		quiz.generate(allCountries);
 }
 
-// Generate all quiz questions using response to ajax request
-function generateQuiz(allCountries, howManyQuestions, howManyOptions) {
-	"use strict";
 
-	// Set default values
-	howManyQuestions = howManyQuestions || 5;
-	howManyOptions = howManyOptions || 4;
-
-	var totalCountries = allCountries.length;
-	var countriesToUse = [];
-	var options = [];
-	var questions = [];
-	var countryIndex;
-	var answerIndex;
-	var answerIndices = [];
-
-
-	for (var i = 0; i < howManyQuestions; ++i) {
-		// Each array element will contain an object with info about a country
-		questions[i] = {};
-		// Generate random indices to decide locations of answers within options
-		answerIndex = Math.floor(Math.random() * howManyOptions);
-		// Remember indices of the correct answers
-		answerIndices.push(answerIndex);
-
-		// Generate random indices to select countries from JSON file
-		countryIndex =  Math.floor(Math.random() * totalCountries);
-		countriesToUse[i] = allCountries[countryIndex];
-
-		// Set questions based on randomly chosen countries
-		questions[i].country = countriesToUse[i].name;
-
-		// Generate random options (capital cities)
-		// And include answer among them
-			for (var j = 0; j < howManyOptions; ++j) {
-				// Insert answer at chosen index
-				if (j === answerIndex) {
-					options[j] = countriesToUse[i].capital;
-				} else {
-					options[j] = allCountries[Math.floor(Math.random() * totalCountries)].capital;
-				}
-			}
-		questions[i].options = options;
-	}
-	return {questions: questions, answers: answerIndices};
-}
+//// Update question
+//function updateQuestion(number) {
+//	// If on final question, show results page
+//	if (number === questions.length
+//
+//}
 
 window.onload = function() {
 	"use strict";
