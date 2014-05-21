@@ -148,7 +148,7 @@ var results = {
 	show: function() {
 		"use strict";
 		// Insert results
-		document.getElementById("finalScore").textContent = results.score();
+		document.getElementById("finalScore").textContent = results.score;
 		// Display results
 		document.getElementById("quizArea").style.display = "none";
 		document.getElementById("resultsArea").style.display = "block";
@@ -179,5 +179,5 @@ function finalQuestion() {
 window.onload = function() {
 	"use strict";
 	fetchData('countries.json', parseJSONResponse);
-	document.getElementById("next").onclick = question.next;
+	document.getElementById("next").onclick = results.show;
 };
