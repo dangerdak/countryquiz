@@ -96,10 +96,9 @@ var question = {
 		warningElt.textContent = "";
 		// Only update question if an answer had been chosen
 		// (Except for initial insertion of question)
-			if (userAnswer() !== null || question.number === 0) {
-			// If question is final one, display results instead of update
-				update();
-			} else {
+		if (userAnswer() !== null || question.number === 0) {
+			update();
+		} else {
 			warningElt.textContent = "Please select an answer before continuing!";
 		}
 	}
@@ -110,8 +109,10 @@ function update() {
 	"use strict";
 	var optionsElt;
 	var buttonElt;
-	results.userAnswers[i] = userAnswer();
 	document.getElementById("country").textContent = quiz.questions[question.number].country;
+	if (question.number !== 0) {
+		results.userAnswers.push(userAnswer());
+	}
 	for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
 		optionsElt = document.getElementsByClassName("choices")[i];
 		optionsElt.textContent = quiz.questions[question.number].options[i];
@@ -124,7 +125,6 @@ function update() {
 	if (question.number === quiz.howManyQuestions) {
 		buttonElt = document.getElementById("next");
 		buttonElt.value = "Results";
-	} else if (question.number ===quiz.howManyQuestions+1) {
 		buttonElt.onclick = results.show;
 	}
 }
@@ -132,22 +132,17 @@ function update() {
 
 var results = {
 	userAnswers: [],
+	score: 0,
 	
-	get score() {
-		"use strict";
-		var score = 0;
-		for (var i = 0, len = results.userAnswers.length; i < len; ++i) {
-			if (results.userAnswers[i] === quiz.answers[i]) {
-				score += 1;
-			}
-		}
-		return score;
-	},
-		
-
 	show: function() {
 		"use strict";
 		// Insert results
+		// Calculate score
+		for (var i = 0, len = results.userAnswers.length; i < len; ++i) {
+			if (results.userAnswers[i] === quiz.answers[i]) {
+				results.score += 1;
+			}
+		}
 		document.getElementById("finalScore").textContent = results.score;
 		// Display results
 		document.getElementById("quizArea").style.display = "none";
@@ -179,5 +174,5 @@ function finalQuestion() {
 window.onload = function() {
 	"use strict";
 	fetchData('countries.json', parseJSONResponse);
-	document.getElementById("next").onclick = results.show;
+	document.getElementById("next").onclick = question.next;
 };
