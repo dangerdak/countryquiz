@@ -86,26 +86,25 @@ function capital(country) {
 // Information for updating question
 var question = {
 	number: 0,
-	userAnswers: [],
 
 	// Can't use "this" keyword as method will be invoked on an event handler
 	// (The event object will then become "this")
 	next: function() {
 		"use strict";
+		var optionsElt;
 		var warningElt = document.getElementById("warning");
 		// Clear warning
 		warningElt.textContent = "";
 		// Only update question if an answer had been chosen
 		// (Except for initial insertion of question)
 		if (userAnswer() !== null || question.number === 0) {
-			question.userAnswers[i] = userAnswer();
-			var labelElt;
+			results.userAnswers[i] = userAnswer();
 			document.getElementById("country").textContent = quiz.questions[question.number].country;
 			for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
-				labelElt = document.getElementsByClassName("choices")[i];
-				labelElt.textContent = quiz.questions[question.number].options[i];
+				optionsElt = document.getElementsByClassName("choices")[i];
+				optionsElt.textContent = quiz.questions[question.number].options[i];
 				// Uncheck radio button
-				labelElt.previousElementSibling.checked=false;
+				optionsElt.previousElementSibling.checked=false;
 			}
 			// Displays question number after incrementing it
 			// (As it should be one greater than the index)
@@ -114,9 +113,34 @@ var question = {
 			warningElt.textContent = "Please select an answer before continuing!";
 		}
 	}
+
 };
 
-// Part of event handler, so "this" refers to event object
+var results = {
+	userAnswers: [],
+	
+	get score() {
+		"use strict";
+		var score = 0;
+		for (var i = 0, len = results.userAnswers.length; i < len; ++i) {
+			if (results.userAnswers[i] === quiz.answers[i]) {
+				score += 1;
+			}
+		}
+		return score;
+	},
+		
+
+	show: function() {
+		"use strict";
+		// Insert results
+		document.getElementById("finalScore").textContent = results.score();
+		// Display results
+		document.getElementById("quizArea").style.display = "none";
+		document.getElementById("resultsArea").style.display = "block";
+	}
+};
+
 function userAnswer() {
 	"use strict";
 	var buttons = document.getElementsByClassName("choiceButton");
@@ -126,6 +150,19 @@ function userAnswer() {
 		}
 	}
 	return null;
+}
+
+// Returns true if question is the last
+function finalQuestion() {
+	"use strict";
+	var resultsButton = document.getElementById("next");
+	if (question.number === quiz.questions.length) {
+		resultsButton.value = "Results";
+		resultsButton.onclick = results.show;
+		return true;
+	} else {
+	return false;
+	}
 }
 
 window.onload = function() {
