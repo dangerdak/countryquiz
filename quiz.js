@@ -54,12 +54,16 @@ var quiz = {
 
 	generate: function(allCountries) {
 		"use strict";
+		// Possible regions:
+		var allRegions = ["Africa", "Americas", "Asia", "Europe", "Oceania"];
 
-		var totalCountries = allCountries.length;
 		var countryToUse;
 		var countryIndex;
 		var answerIndex;
 		var randomCountry;
+
+		var countries = setRegion(allCountries, allRegions[3]);
+		var totalCountries = countries.length;
 
 		for (var i = 0; i < this.howManyQuestions; ++i) {
 			// Each array element will contain an object with info about a country
@@ -74,7 +78,7 @@ var quiz = {
 			// Ensure capital property exists on this country
 			do {
 				countryIndex =  Math.floor(Math.random() * totalCountries);
-				countryToUse = allCountries[countryIndex];
+				countryToUse = countries[countryIndex];
 			}
 			while (!capital(countryToUse));
 
@@ -90,7 +94,7 @@ var quiz = {
 					} else {
 						// Ensure capital property exists on this country
 						do {
-						randomCountry = allCountries[Math.floor(Math.random() * totalCountries)];
+						randomCountry = countries[Math.floor(Math.random() * totalCountries)];
 						this.questions[i].options[j] = randomCountry.capital;
 						}
 						while (!capital(randomCountry)); 
@@ -99,6 +103,24 @@ var quiz = {
 		}
 	}
 };
+
+function setRegion(allCountries, continent) {
+	"use strict";
+	var countries = [];
+	// If no continent specified, can use any country
+	if (!continent) {
+		countries = allCountries;
+	} else {
+		// Pick out countries from specific continent
+		allCountries.forEach(
+				function(country, i, allCountries) {
+					if (allCountries[i].region === continent) {
+						countries.push(allCountries[i]);
+					}
+				});
+	}
+	return countries;
+}
 
 // Check if capital property is present
 function capital(country) {
