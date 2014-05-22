@@ -48,8 +48,12 @@ var quiz = {
 			this.answers.push(answerIndex);
 
 			// Generate random index to select country from JSON file
-			countryIndex =  Math.floor(Math.random() * totalCountries);
-			countryToUse = allCountries[countryIndex];
+			// Ensure capital property exists on this country
+			do {
+				countryIndex =  Math.floor(Math.random() * totalCountries);
+				countryToUse = allCountries[countryIndex];
+			}
+			while (!capital(countryToUse));
 
 			// Set questions based on randomly chosen countries
 			this.questions[i].country = countryToUse.name;
@@ -76,7 +80,7 @@ var quiz = {
 // Check if capital property is present
 function capital(country) {
 	"use strict";
-	if (country.capital.length > 0) {
+	if (country.capital.length > 1) {
 		return true;
 	} else {
 		return false;
