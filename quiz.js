@@ -171,7 +171,7 @@ function update() {
 	// Displays question number after incrementing it
 	// (As it should be one greater than the index)
 	document.getElementById("questionNumber").textContent = ++question.number + ". ";
-	if (question.number === quiz.howManyQuestions) {
+	if (finalQuestion()) {
 		buttonElt = document.getElementById("next");
 		buttonElt.value = "Results";
 		buttonElt.onclick = results.show;
@@ -183,14 +183,19 @@ var results = {
 	userAnswers: [],
 	score: 0,
 	
+	// Insert results
 	show: function() {
 		"use strict";
-		// Insert results
+		// Insert answer table
 		// Calculate score
-		results.table(quiz.howManyQuestions);
-		for (var i = 0, len = results.userAnswers.length; i < len; ++i) {
+		var tableRows = results.table(quiz.howManyQuestions).childNodes;
+		for (var i = 0; i < quiz.howManyQuestions; ++i) {
 			if (results.userAnswers[i] === quiz.answers[i]) {
 				results.score += 1;
+				// Color-code table
+				tableRows[i].style.color = "green";
+			} else {
+				tableRows[i].style.color = "red";
 			}
 		}
 		document.getElementById("finalScore").textContent = results.score;
@@ -206,6 +211,9 @@ var results = {
 		var headCell0 = document.createElement("th");
 		var headCell1= document.createElement("th");
 		var bodyElt = tableElt.createTBody();
+		var rowElt;
+		var cellElt0;
+		var cellElt1;
 
 		headCell0.textContent = "Country";
 		headCell1.textContent = "Capital";
@@ -213,11 +221,19 @@ var results = {
 		headElt.appendChild(headCell1);
 
 		for (var i = 0; i < howManyQuestions; ++i) {
-			var rowElt = bodyElt.insertRow();
-			rowElt.insertCell().textContent = quiz.questions[i].country;
-			rowElt.insertCell().textContent = quiz.questions[i].options[quiz.answers[i]];
+			rowElt = document.createElement("tr");
+			cellElt0 = document.createElement("td");
+			cellElt1 = document.createElement("td");
+
+			cellElt0.textContent = quiz.questions[i].country;
+			cellElt1.textContent = quiz.questions[i].options[quiz.answers[i]];
+
+			rowElt.appendChild(cellElt0);
+			rowElt.appendChild(cellElt1);
+			bodyElt.appendChild(rowElt);
 		}
 		document.getElementById("resultsArea").appendChild(tableElt);
+		return bodyElt;
 	}
 };
 
