@@ -24,7 +24,7 @@ function parseJSONResponse(responseText) {
 // Generate all quiz questions using response to ajax request
 var quiz = {
 	howManyQuestions: 2,
-	howManyOptions: 5,
+	howManyOptions: 10,
 
 	answers: [],
 	questions: [],
@@ -67,12 +67,12 @@ var quiz = {
 
 		for (var i = 0; i < this.howManyQuestions; ++i) {
 			// Each array element will contain an object with info about a country
-			this.questions[i] = {};
-			this.questions[i].options = [];
+			quiz.questions[i] = {};
+			quiz.questions[i].options = [];
 			// Generate random indices to decide locations of answers within options
-			answerIndex = Math.floor(Math.random() * this.howManyOptions);
+			answerIndex = Math.floor(Math.random() * quiz.howManyOptions);
 			// Remember indices of the correct answers
-			this.answers.push(answerIndex);
+			quiz.answers.push(answerIndex);
 
 			// Generate random index to select country from JSON file
 			// Ensure capital property exists on this country
@@ -83,26 +83,48 @@ var quiz = {
 			while (!capital(countryToUse));
 
 			// Set questions based on randomly chosen countries
-			this.questions[i].country = countryToUse.name;
+			quiz.questions[i].country = countryToUse.name;
 
 			// Generate random options (capital cities)
 			// And include answer among them
-				for (var j = 0; j < this.howManyOptions; ++j) {
+				for (var j = 0; j < quiz.howManyOptions; ++j) {
 					// Insert answer at chosen index
 					if (j === answerIndex) {
-						this.questions[i].options[j] = countryToUse.capital;
+						quiz.questions[i].options[j] = countryToUse.capital;
 					} else {
 						// Ensure capital property exists on this country
+						// And that there are no duplicate options
 						do {
 						randomCountry = countries[Math.floor(Math.random() * totalCountries)];
-						this.questions[i].options[j] = randomCountry.capital;
 						}
-						while (!capital(randomCountry)); 
+						while (!capital(randomCountry) || isDuplicate(randomCountry.capital, quiz.questions[i].options, countryToUse.capital)); 
+						quiz.questions[i].options[j] = randomCountry.capital;
 					}
 				}
 		}
 	}
 };
+
+// Check for duplicate options
+function isDuplicate(candidate, options, answer) {
+	"use strict";
+	// Candidate will become a duplicate if it equals the answer
+	if (candidate === answer) {
+		return true;
+	}
+	// Can't be duplicate if there are no options yet
+	// Must do this before trying to index options below
+	if (options.length === 0) {
+		return false;
+	}
+	// Check for duplicates in options so far
+	for (var i = 0; i < options.length; ++i) {
+		if (candidate === options[i]) {
+			return true;
+		}
+	}
+	return false;
+}
 
 function setRegion(allCountries, continent) {
 	"use strict";
@@ -209,6 +231,7 @@ var results = {
 	table: function(howManyQuestions) {
 		"use strict";
 		var tableElt = document.createElement("table");
+		var captionElt = tableElt.createCaption();
 		var headElt = tableElt.createTHead();
 		var headCell0 = document.createElement("th");
 		var headCell1= document.createElement("th");
@@ -216,7 +239,8 @@ var results = {
 		var rowElt;
 		var cellElt0;
 		var cellElt1;
-
+		
+		captionElt.textContent = "Solutions";
 		headCell0.textContent = "Country";
 		headCell1.textContent = "Capital";
 		headElt.appendChild(headCell0);
