@@ -23,7 +23,7 @@ function parseJSONResponse(responseText) {
 
 // Generate all quiz questions using response to ajax request
 var quiz = {
-	howManyQuestions: 5,
+	howManyQuestions: 2,
 	howManyOptions: 5,
 
 	answers: [],
@@ -187,6 +187,7 @@ var results = {
 		"use strict";
 		// Insert results
 		// Calculate score
+		results.table(quiz.howManyQuestions);
 		for (var i = 0, len = results.userAnswers.length; i < len; ++i) {
 			if (results.userAnswers[i] === quiz.answers[i]) {
 				results.score += 1;
@@ -196,6 +197,27 @@ var results = {
 		// Display results
 		document.getElementById("quizArea").style.display = "none";
 		document.getElementById("resultsArea").style.display = "block";
+	},
+
+	table: function(howManyQuestions) {
+		"use strict";
+		var tableElt = document.createElement("table");
+		var headElt = tableElt.createTHead();
+		var headCell0 = document.createElement("th");
+		var headCell1= document.createElement("th");
+		var bodyElt = tableElt.createTBody();
+
+		headCell0.textContent = "Country";
+		headCell1.textContent = "Capital";
+		headElt.appendChild(headCell0);
+		headElt.appendChild(headCell1);
+
+		for (var i = 0; i < howManyQuestions; ++i) {
+			var rowElt = bodyElt.insertRow();
+			rowElt.insertCell().textContent = quiz.questions[i].country;
+			rowElt.insertCell().textContent = quiz.questions[i].options[quiz.answers[i]];
+		}
+		document.getElementById("resultsArea").appendChild(tableElt);
 	}
 };
 
