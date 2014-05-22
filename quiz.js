@@ -186,6 +186,8 @@ var results = {
 	// Insert results
 	show: function() {
 		"use strict";
+		// Update userAnswers with final answer
+		results.userAnswers.push(userAnswer());
 		// Insert answer table
 		// Calculate score
 		var tableRows = results.table(quiz.howManyQuestions).childNodes;
