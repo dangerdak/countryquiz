@@ -17,17 +17,40 @@ function parseJSONResponse(responseText) {
 	"use strict";
 		// Put all country data in a global variable
 		var allCountries = JSON.parse(responseText);
+		quiz.insertHTML();
 		quiz.generate(allCountries);
 }
 
 // Generate all quiz questions using response to ajax request
 var quiz = {
 	howManyQuestions: 5,
-	howManyOptions: 4,
+	howManyOptions: 5,
 
 	answers: [],
 	questions: [],
 	currentQuestion: 0,
+
+	// !!Should insert entire element so number of options is variable
+	insertHTML: function() {
+		"use strict";
+		var selectionArea = document.getElementById("selectionArea");
+		for (var i = 0; i < quiz.howManyOptions; ++i) {
+			var inputElt = document.createElement("input");
+			var labelElt = document.createElement("label");
+			var lineElt = document.createElement("br");
+			inputElt.type = "radio";
+			inputElt.name = "city";
+			inputElt.className = "optionButtons";
+			inputElt.id = "option" + i;
+			labelElt.className = "options";
+			labelElt.htmlFor = "option" + i;
+			selectionArea.appendChild(inputElt);
+			selectionArea.appendChild(labelElt);
+			selectionArea.appendChild(lineElt);
+		}
+		
+
+	},
 
 	generate: function(allCountries) {
 		"use strict";
@@ -118,7 +141,7 @@ function update() {
 		results.userAnswers.push(userAnswer());
 	}
 	for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
-		optionsElt = document.getElementsByClassName("choices")[i];
+		optionsElt = document.getElementsByClassName("options")[i];
 		optionsElt.textContent = quiz.questions[question.number].options[i];
 		// Uncheck radio button
 		optionsElt.previousElementSibling.checked=false;
@@ -156,7 +179,7 @@ var results = {
 
 function userAnswer() {
 	"use strict";
-	var buttons = document.getElementsByClassName("choiceButton");
+	var buttons = document.getElementsByClassName("optionButtons");
 	for (var i = 0; i < buttons.length; ++i) {
 		if (buttons[i].checked) {
 			return i;
