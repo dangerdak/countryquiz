@@ -28,32 +28,39 @@ window.onload = function() {
 
     table: function(howManyQuestions) {
       var tableElt = document.createElement("table");
-      var captionElt = tableElt.createCaption();
       var headElt = tableElt.createTHead();
       var headCell0 = document.createElement("th");
       var headCell1= document.createElement("th");
+      var headCell2= document.createElement("th");
       var bodyElt = tableElt.createTBody();
       var rowElt;
       var cellElt0;
       var cellElt1;
+      var cellElt2;
       
-      captionElt.textContent = "Solutions";
       headCell0.textContent = "Country";
       headCell1.textContent = "Capital";
+      headCell2.textContent = "Your Answer";
       headElt.appendChild(headCell0);
       headElt.appendChild(headCell1);
+      headElt.appendChild(headCell2);
 
       for (var i = 0; i < howManyQuestions; ++i) {
         rowElt = document.createElement("tr");
         cellElt0 = document.createElement("td");
         cellElt1 = document.createElement("td");
+        cellElt2 = document.createElement("td");
 
         cellElt0.textContent = quiz.questions[i].country;
         cellElt1.textContent = quiz.questions[i].options[quiz.answers[i]];
+        cellElt2.textContent = quiz.questions[i].options[results.userAnswers[i]];
 
         rowElt.appendChild(cellElt0);
         rowElt.appendChild(cellElt1);
+        rowElt.appendChild(cellElt2);
+        rowElt.classList.add('table-row');
         bodyElt.appendChild(rowElt);
+        tableElt.classList.add('table');
       }
       document.getElementById("resultsArea").appendChild(tableElt);
       return bodyElt;
