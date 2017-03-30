@@ -183,18 +183,26 @@ window.onload = function() {
     insertHTML: function() {
       var selectionArea = document.getElementById("selectionArea");
       for (var i = 0; i < quiz.howManyOptions; ++i) {
+        var optionDiv = document.createElement("div");
         var inputElt = document.createElement("input");
         var labelElt = document.createElement("label");
         var lineElt = document.createElement("br");
+
+        optionDiv.className = "option-container";
         inputElt.type = "radio";
         inputElt.name = "city";
         inputElt.className = "optionButtons";
         inputElt.id = "option" + i;
         labelElt.className = "options";
         labelElt.htmlFor = "option" + i;
-        selectionArea.appendChild(inputElt);
-        selectionArea.appendChild(labelElt);
-        selectionArea.appendChild(lineElt);
+        labelElt.addEventListener('click', function() {
+          var warningElt = document.getElementById("warning");
+          warningElt.textContent = "";
+        });
+
+        optionDiv.appendChild(inputElt);
+        optionDiv.appendChild(labelElt);
+        selectionArea.appendChild(optionDiv);
       }
     },
 
