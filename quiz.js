@@ -6,8 +6,8 @@ window.onload = function() {
     
     // Insert results
     show: function() {
-      // Update userAnswers with final answer
-      results.userAnswers.push(question.userAnswer());
+      // Update getUserAnswers with final answer
+      results.userAnswers.push(question.userAnswer);
       // Insert answer table
       // Calculate score
       var tableRows = results.table(quiz.howManyQuestions).childNodes;
@@ -71,14 +71,15 @@ window.onload = function() {
   var question = {
     number: 0,
 
-    userAnswer: function() {
+    userAnswer: null,
+
+    setUserAnswer: function() {
       var buttons = document.getElementsByClassName("optionButtons");
       for (var i = 0; i < buttons.length; ++i) {
         if (buttons[i].checked) {
-          return i;
+          this.userAnswer = i;
         }
       }
-      return null;
     },
 
     update: function() {
@@ -86,7 +87,7 @@ window.onload = function() {
       var buttonElt;
       document.getElementById("country").textContent = quiz.questions[question.number].country;
       if (question.number !== 0) {
-        results.userAnswers.push(question.userAnswer());
+        results.userAnswers.push(question.userAnswer);
       }
       for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
         optionsElt = document.getElementsByClassName("options")[i];
@@ -121,7 +122,8 @@ window.onload = function() {
       warningElt.textContent = "";
       // Only update question if an answer had been chosen
       // (Except for initial insertion of question)
-      if (question.userAnswer() !== null || question.number === 0) {
+      question.setUserAnswer();
+      if (question.userAnswer !== null || question.number === 0) {
         question.update();
       } else {
         warningElt.textContent = "Please select an answer before continuing!";
