@@ -122,16 +122,18 @@ window.onload = function() {
     },
 
     render : function() {
-      var optionsElt;
+      function clearWarning() {
+          document.getElementById("warning").textContent = '';
+      }
+      var optionElts = document.getElementsByClassName('options');
       document.getElementById("country").textContent = this.name;
       document.getElementById("questionNumber").textContent = this.number + ". ";
 
       // Display options
       for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
-        optionsElt = document.getElementsByClassName("options")[i];
-        optionsElt.textContent = this.options[i];
-        // Uncheck radio button
-        optionsElt.previousElementSibling.checked=false;
+        optionElts[i].textContent = this.options[i];
+        optionElts[i].previousElementSibling.checked=false;
+        optionElts[i].addEventListener('click',  clearWarning);
       }
     },
   };
@@ -190,32 +192,6 @@ window.onload = function() {
       }
       return false;
     },
-
-
-    // Insert entire element so number of options is variable
-    insertHTML: function() {
-
-      var selectionArea = document.getElementById("selectionArea");
-      for (var i = 0; i < quiz.howManyOptions; ++i) {
-        var optionDiv = document.createElement("div");
-        var inputElt = document.createElement("input");
-        var labelElt = document.createElement("label");
-
-        inputElt.type = "radio";
-        inputElt.name = "city";
-        inputElt.className = "optionButtons";
-        inputElt.id = "option" + i;
-
-        labelElt.className = "options";
-        labelElt.htmlFor = "option" + i;
-        labelElt.addEventListener('click', clearWarning);
-
-        optionDiv.className = "option-container";
-        optionDiv.appendChild(inputElt);
-        optionDiv.appendChild(labelElt);
-        selectionArea.appendChild(optionDiv);
-      }
-    },
   };
 
   function parseJSONResponse(responseText) {
@@ -227,7 +203,6 @@ window.onload = function() {
       return question.clone(country, i + 1, allCountries);
     });
 
-    quiz.insertHTML();
     questions[questionNumber - 1].render();
     document.getElementById("next").addEventListener('click', function() {
       questions[questionNumber - 1].setUserAnswer();
@@ -244,9 +219,6 @@ window.onload = function() {
         this.onclick = results.show(questions);
       }
     });
-    /*
-    quiz.generate(allCountries);
-    */
   }
 
   // AJAX request for country data in file at url
