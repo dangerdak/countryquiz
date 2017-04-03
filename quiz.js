@@ -1,8 +1,18 @@
 window.onload = function() {
   "use strict";
 
-  function randomElementFrom(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+  function uniqueElementsFrom(arr, length) {
+    var candidateIndex = Math.floor(Math.random() * arr.length);
+    var sample = [candidateIndex];
+    while (sample.length < length) {
+      while (sample.indexOf(candidateIndex) !== -1) {
+        candidateIndex =  Math.floor(Math.random() * arr.length);
+      }
+      sample.push(candidateIndex);
+    }
+    return sample.map(function(candidateIndex) {
+      return arr[candidateIndex];
+    });
   }
 
   var results = {
@@ -10,14 +20,14 @@ window.onload = function() {
     score: 0,
     
     // Insert results
-    show: function() {
+    show: function(questions) {
       // Update getUserAnswers with final answer
-      results.userAnswers.push(question.userAnswer);
+      results.userAnswers.push(questions[quiz.howManyQuestions - 1].userAnswer);
       // Insert answer table
       // Calculate score
-      var tableRows = results.table(quiz.howManyQuestions).childNodes;
+      var tableRows = results.table(questions, quiz.howManyQuestions).childNodes;
       for (var i = 0; i < quiz.howManyQuestions; ++i) {
-        if (results.userAnswers[i] === quiz.answers[i]) {
+        if (questions[i].userAnswer === questions[i].correctAnswer) {
           results.score += 1;
           // Color-code table
           tableRows[i].style.color = "green";
@@ -31,7 +41,7 @@ window.onload = function() {
       document.getElementById("resultsArea").style.display = "block";
     },
 
-    table: function(howManyQuestions) {
+    table: function(questions, howManyQuestions) {
       var tableElt = document.createElement("table");
       var headElt = tableElt.createTHead();
       var headCell0 = document.createElement("th");
@@ -56,9 +66,9 @@ window.onload = function() {
         cellElt1 = document.createElement("td");
         cellElt2 = document.createElement("td");
 
-        cellElt0.textContent = quiz.questions[i].country;
-        cellElt1.textContent = quiz.questions[i].options[quiz.answers[i]];
-        cellElt2.textContent = quiz.questions[i].options[results.userAnswers[i]];
+        cellElt0.textContent = questions[i].name;
+        cellElt1.textContent = questions[i].correctAnswer;
+        cellElt2.textContent = questions[i].userAnswer;
 
         rowElt.appendChild(cellElt0);
         rowElt.appendChild(cellElt1);
@@ -88,22 +98,25 @@ window.onload = function() {
       var buttons = document.getElementsByClassName("optionButtons");
       for (var i = 0; i < buttons.length; ++i) {
         if (buttons[i].checked) {
-          this.userAnswer = i;
+          this.userAnswer = this.options[i];
         }
       }
     },
 
     clone: function(obj, n, all, howManyOptions) {
+      var answerIndex;
       var newQuestion = Object.create(this);
       howManyOptions = howManyOptions || 5;
+      answerIndex = Math.floor(Math.random() * howManyOptions);
       newQuestion.number = n;
       newQuestion.name = obj.name;
       newQuestion.correctAnswer = obj.capital;
-      newQuestion.options.push(obj.capital);
 
-      for (var i = 0; i < howManyOptions - 1; ++i) {
-        newQuestion.options.push(randomElementFrom(all).capital);
-      }
+      newQuestion.options = uniqueElementsFrom(all, howManyOptions - 1).map(
+        function(country) {
+          return country.capital;
+        });
+      newQuestion.options.splice(answerIndex, 0, newQuestion.correctAnswer);
 
       return newQuestion;
     },
@@ -121,56 +134,6 @@ window.onload = function() {
         optionsElt.previousElementSibling.checked=false;
       }
     },
-
-    update: function() {
-      var optionsElt;
-      var buttonElt;
-      document.getElementById("country").textContent = quiz.questions[question.number].country;
-      if (question.number !== 0) {
-        results.userAnswers.push(question.userAnswer);
-      }
-      for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
-        optionsElt = document.getElementsByClassName("options")[i];
-        optionsElt.textContent = quiz.questions[question.number].options[i];
-        // Uncheck radio button
-        optionsElt.previousElementSibling.checked=false;
-      }
-      // Displays question number after incrementing it
-      // (As it should be one greater than the index)
-      document.getElementById("questionNumber").textContent = this.number + ". ";
-      if (question.finalQuestion()) {
-        buttonElt = document.getElementById("next");
-        buttonElt.value = "Results";
-        buttonElt.onclick = results.show;
-      }
-    },
-
-    // Returns true if question is the last
-    finalQuestion: function() {
-      if (question.number === quiz.howManyQuestions) {
-        return true;
-      } else {
-      return false;
-      }
-    },
-
-    // Can't use "this" keyword as method will be invoked on an event handler
-    // (The event object will then become "this")
-    next: function() {
-      var warningElt = document.getElementById("warning");
-      // Clear warning
-      warningElt.textContent = "";
-      // Only update question if an answer had been chosen
-      // (Except for initial insertion of question)
-      console.log(typeof this.setUserAnswer);
-      this.setUserAnswer();
-      if (this.userAnswer !== '' || this.number === 1) {
-        this.render();
-      } else {
-        warningElt.textContent = "Please select an answer before continuing!";
-      }
-    }
-
   };
 
   // Generate all quiz questions using response to ajax request
@@ -309,12 +272,30 @@ window.onload = function() {
   };
 
   function parseJSONResponse(responseText) {
+    var questionNumber = 1;
     var allCountries = JSON.parse(responseText);
-    var q1 = question.clone(allCountries[0], 1, allCountries);
+    var countries = uniqueElementsFrom(allCountries, quiz.howManyQuestions);
+
+    var questions = countries.map(function(country, i) {
+      return question.clone(country, i + 1, allCountries);
+    });
+
     quiz.insertHTML();
-    q1.next();
+    questions[questionNumber - 1].render();
     document.getElementById("next").addEventListener('click', function() {
-      q1.next();
+      questions[questionNumber - 1].setUserAnswer();
+      if (questionNumber < quiz.howManyQuestions && questions[questionNumber - 1].userAnswer !== '') {
+        questionNumber++;
+        questions[questionNumber - 1].render();
+      }
+      else if (questions[questionNumber - 1].userAnswer === '') {
+        var warningElt = document.getElementById("warning");
+        warningElt.textContent = "Please select an answer before continuing!";
+      }
+      else {
+        this.value = "Results";
+        this.onclick = results.show(questions);
+      }
     });
     /*
     quiz.generate(allCountries);
