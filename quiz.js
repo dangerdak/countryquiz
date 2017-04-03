@@ -192,83 +192,30 @@ window.onload = function() {
     },
 
 
-    // !!Should insert entire element so number of options is variable
+    // Insert entire element so number of options is variable
     insertHTML: function() {
+
       var selectionArea = document.getElementById("selectionArea");
       for (var i = 0; i < quiz.howManyOptions; ++i) {
         var optionDiv = document.createElement("div");
         var inputElt = document.createElement("input");
         var labelElt = document.createElement("label");
-        var lineElt = document.createElement("br");
 
-        optionDiv.className = "option-container";
         inputElt.type = "radio";
         inputElt.name = "city";
         inputElt.className = "optionButtons";
         inputElt.id = "option" + i;
+
         labelElt.className = "options";
         labelElt.htmlFor = "option" + i;
-        labelElt.addEventListener('click', function() {
-          var warningElt = document.getElementById("warning");
-          warningElt.textContent = "";
-        });
+        labelElt.addEventListener('click', clearWarning);
 
+        optionDiv.className = "option-container";
         optionDiv.appendChild(inputElt);
         optionDiv.appendChild(labelElt);
         selectionArea.appendChild(optionDiv);
       }
     },
-
-    generate: function(allCountries) {
-      // Possible regions:
-      var allRegions = ["Africa", "Americas", "Asia", "Europe", "Oceania"];
-
-      var countryToUse;
-      var countryIndex;
-      var answerIndex;
-      var randomCountry;
-
-      var countries = quiz.setRegion(allCountries);
-      var totalCountries = countries.length;
-
-      for (var i = 0; i < this.howManyQuestions; ++i) {
-        // Each array element will contain an object with info about a country
-        quiz.questions[i] = {};
-        quiz.questions[i].options = [];
-        // Generate random indices to decide locations of answers within options
-        answerIndex = Math.floor(Math.random() * quiz.howManyOptions);
-        // Remember indices of the correct answers
-        quiz.answers.push(answerIndex);
-
-        // Generate random index to select country from JSON file
-        // Ensure capital property exists on this country
-        do {
-          countryIndex =  Math.floor(Math.random() * totalCountries);
-          countryToUse = countries[countryIndex];
-        }
-        while (!quiz.capital(countryToUse));
-
-        // Set questions based on randomly chosen countries
-        quiz.questions[i].country = countryToUse.name;
-
-        // Generate random options (capital cities)
-        // And include answer among them
-          for (var j = 0; j < quiz.howManyOptions; ++j) {
-            // Insert answer at chosen index
-            if (j === answerIndex) {
-              quiz.questions[i].options[j] = countryToUse.capital;
-            } else {
-              // Ensure capital property exists on this country
-              // And that there are no duplicate options
-              do {
-              randomCountry = countries[Math.floor(Math.random() * totalCountries)];
-              }
-              while (!quiz.capital(randomCountry) || quiz.isDuplicate(randomCountry.capital, quiz.questions[i].options, countryToUse.capital)); 
-              quiz.questions[i].options[j] = randomCountry.capital;
-            }
-          }
-      }
-    }
   };
 
   function parseJSONResponse(responseText) {
