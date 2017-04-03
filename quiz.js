@@ -1,5 +1,10 @@
 window.onload = function() {
   "use strict";
+
+  function randomElementFrom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
   var results = {
     userAnswers: [],
     score: 0,
@@ -71,7 +76,13 @@ window.onload = function() {
   var question = {
     number: 0,
 
-    userAnswer: null,
+    name : '',
+
+    correctAnswer: '',
+
+    userAnswer: '',
+
+    options: [],
 
     setUserAnswer: function() {
       var buttons = document.getElementsByClassName("optionButtons");
@@ -79,6 +90,35 @@ window.onload = function() {
         if (buttons[i].checked) {
           this.userAnswer = i;
         }
+      }
+    },
+
+    clone: function(obj, n, all, howManyOptions) {
+      var newQuestion = Object.create(this);
+      howManyOptions = howManyOptions || 5;
+      newQuestion.number = n;
+      newQuestion.name = obj.name;
+      newQuestion.correctAnswer = obj.capital;
+      newQuestion.options.push(obj.capital);
+
+      for (var i = 0; i < howManyOptions - 1; ++i) {
+        newQuestion.options.push(randomElementFrom(all).capital);
+      }
+
+      return newQuestion;
+    },
+
+    render : function() {
+      var optionsElt;
+      document.getElementById("country").textContent = this.name;
+      document.getElementById("questionNumber").textContent = this.number + ". ";
+
+      // Display options
+      for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
+        optionsElt = document.getElementsByClassName("options")[i];
+        optionsElt.textContent = this.options[i];
+        // Uncheck radio button
+        optionsElt.previousElementSibling.checked=false;
       }
     },
 
@@ -97,7 +137,7 @@ window.onload = function() {
       }
       // Displays question number after incrementing it
       // (As it should be one greater than the index)
-      document.getElementById("questionNumber").textContent = ++question.number + ". ";
+      document.getElementById("questionNumber").textContent = this.number + ". ";
       if (question.finalQuestion()) {
         buttonElt = document.getElementById("next");
         buttonElt.value = "Results";
@@ -122,9 +162,10 @@ window.onload = function() {
       warningElt.textContent = "";
       // Only update question if an answer had been chosen
       // (Except for initial insertion of question)
-      question.setUserAnswer();
-      if (question.userAnswer !== null || question.number === 0) {
-        question.update();
+      console.log(typeof this.setUserAnswer);
+      this.setUserAnswer();
+      if (this.userAnswer !== '' || this.number === 1) {
+        this.render();
       } else {
         warningElt.textContent = "Please select an answer before continuing!";
       }
@@ -268,10 +309,16 @@ window.onload = function() {
   };
 
   function parseJSONResponse(responseText) {
-    // Put all country data in a global variable
     var allCountries = JSON.parse(responseText);
+    var q1 = question.clone(allCountries[0], 1, allCountries);
     quiz.insertHTML();
+    q1.next();
+    document.getElementById("next").addEventListener('click', function() {
+      q1.next();
+    });
+    /*
     quiz.generate(allCountries);
+    */
   }
 
   // AJAX request for country data in file at url
@@ -282,7 +329,6 @@ window.onload = function() {
     request.onreadystatechange = function() {
       if (request.readyState === 4 && request.status === 200) {
         responseHandler(request.responseText);
-        question.next();
       }
     };
     request.send();
@@ -290,5 +336,4 @@ window.onload = function() {
 
 
   fetchData('countries.json', parseJSONResponse);
-  document.getElementById("next").onclick = question.next;
 };
