@@ -22,7 +22,7 @@ window.onload = function() {
 
       questions.forEach(function(question, index) {
         if (question.userAnswer === question.correctAnswer) {
-          results.score += 1;
+          score += 1;
           tableRows[index].style.color = 'green';
         }
         else {
