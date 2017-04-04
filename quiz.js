@@ -83,11 +83,10 @@ window.onload = function() {
       }
     },
 
-    clone: function(obj, n, all, howManyOptions) {
-      var answerIndex;
+    clone: function(obj, n, all) {
+      var howManyOptions = 5;
+      var answerIndex = Math.floor(Math.random() * howManyOptions);
       var newQuestion = Object.create(this);
-      howManyOptions = howManyOptions || 5;
-      answerIndex = Math.floor(Math.random() * howManyOptions);
       newQuestion.number = n;
       newQuestion.name = obj.name;
       newQuestion.correctAnswer = obj.capital;
