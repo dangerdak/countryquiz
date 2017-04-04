@@ -3,7 +3,7 @@ window.onload = function() {
 
   function uniqueElementsFrom(arr, length) {
     var candidateIndex = Math.floor(Math.random() * arr.length);
-    var sample = [candidateIndex];
+    var sample = [];
     while (sample.length < length) {
       while (sample.indexOf(candidateIndex) !== -1) {
         candidateIndex =  Math.floor(Math.random() * arr.length);
@@ -92,10 +92,15 @@ window.onload = function() {
       newQuestion.name = obj.name;
       newQuestion.correctAnswer = obj.capital;
 
-      newQuestion.options = uniqueElementsFrom(all, howManyOptions - 1).map(
-        function(country) {
-          return country.capital;
-        });
+      function toCapital(country) {
+        return country.capital;
+      }
+
+      do {
+        newQuestion.options = uniqueElementsFrom(all, howManyOptions - 1).map(toCapital);
+      }
+      while (newQuestion.options.indexOf(newQuestion.correctAnswer) !== -1);
+      console.log(newQuestion.correctAnswer);
       newQuestion.options.splice(answerIndex, 0, newQuestion.correctAnswer);
 
       return newQuestion;
