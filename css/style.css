@@ -1,6 +1,9 @@
 .resultsArea {
 	display: none;
 }
+.quizArea {
+        display: none;
+}
 body {
 
         font-family: 'Amatic SC', cursive;
@@ -12,21 +15,23 @@ h1 {
         font-family: 'Abril Fatface', cursive;
         font-size: 1.5em;
 }
-input[type='radio'] {
+input {
         display: none;
 }
-label, #next {
+label, #next, #go {
         cursor: pointer;
 }
 label:hover {
         color: #4f8585;
 }
-input[type='radio']:checked + label{
+input:checked + label{
         font-weight: bold;
         color: #4f8585;
 }
-#next {
+#next, #go {
         float: right;
+        border: 1px dotted #4f8585;
+        padding: 0 0.5em;
 }
 #warning {
         margin-top: 1em;

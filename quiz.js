@@ -15,6 +15,17 @@ window.onload = function() {
     });
   }
 
+  function checkedBoxes(name) {
+    var checkboxes = document.getElementsByName(name);
+    var checked= [];
+    for (var i = 0, len = checkboxes.length; i < len; i++) {
+      if (checkboxes[i].checked) {
+        checked.push(checkboxes[i]);
+      }
+    }
+    return checked;
+  }
+
   var results = {
     show: function(questions) {
       var score = 0;
@@ -99,7 +110,6 @@ window.onload = function() {
         newQuestion.options = uniqueElementsFrom(all, howManyOptions - 1).map(toCapital);
       }
       while (newQuestion.options.indexOf(newQuestion.correctAnswer) !== -1);
-      console.log(newQuestion.correctAnswer);
       newQuestion.options.splice(answerIndex, 0, newQuestion.correctAnswer);
 
       return newQuestion;
@@ -122,23 +132,31 @@ window.onload = function() {
   };
 
   function parseJSONResponse(responseText) {
+    var countries, questions;
     var howManyQuestions = 5;
     var howManyOptions = 5;
-    var region;
     var questionNumber = 1;
     var allCountries = JSON.parse(responseText);
-    if (region) {
-      allCountries = allCountries.filter(function(country) {
-        return country.region === region;
-      });
-    }
-    var countries = uniqueElementsFrom(allCountries, howManyQuestions);
 
-    var questions = countries.map(function(country, i) {
+    document.getElementById('go').addEventListener('click', function() {
+      var checked = checkedBoxes('region');
+      var selectedRegions = checked.map(function(el) {
+        return el.value;
+      });
+      document.getElementById('settings-area').style.display = 'none';
+      document.getElementById('quizArea').style.display = 'block';
+      if (selectedRegions.length) {
+        allCountries = allCountries.filter(function(country) {
+          return selectedRegions.indexOf(country.region) !== -1;
+        });
+      }
+      countries = uniqueElementsFrom(allCountries, howManyQuestions);
+      questions = countries.map(function(country, i) {
       return question.clone(country, i + 1, allCountries);
+      });
+      questions[questionNumber - 1].render();
     });
 
-    questions[questionNumber - 1].render();
     document.getElementById("next").addEventListener('click', function() {
       questions[questionNumber - 1].setUserAnswer();
       if (questionNumber < howManyQuestions && questions[questionNumber - 1].userAnswer !== '') {
@@ -167,6 +185,13 @@ window.onload = function() {
     };
     request.send();
   }
+
+  document.getElementById('region-all').addEventListener('click', function() {
+    var checkboxes = document.getElementsByName('region');
+    for (var i = 0, len = checkboxes.length; i < len; i++) {
+      checkboxes[i].checked = checkboxes[0].checked ? true : false;
+    }
+  });
 
   fetchData('countries.json', parseJSONResponse);
 };

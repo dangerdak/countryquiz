@@ -10,6 +10,36 @@
 	
 	<body>
 	<h1> Capital Cities Quiz</h1>
+  <div class="settings-area" id="settings-area">
+    <p>Choose region(s) to focus on: </p>
+    <form>
+      <div class="option-container">
+        <input type="checkbox" name="region" class="region-buttons" value="All" id="region-all">
+        <label for="region-all" class="regions">All
+      </div>
+      <div class="option-container">
+        <input type="checkbox" name="region" class="region-buttons" value="Africa" id="region-africa">
+        <label for="region-africa" class="regions">Africa
+      </div>
+      <div class="option-container">
+        <input type="checkbox" name="region" class="region-buttons" value="Americas" id="region-americas">
+        <label for="region-americas" class="regions">Americas
+      </div>
+      <div class="option-container">
+        <input type="checkbox" name="region" class="region-buttons" value="Asia" id="region-asia">
+        <label for="region-asia" class="regions">Asia
+      </div>
+      <div class="option-container">
+        <input type="checkbox" name="region" class="region-buttons" value="Europe" id="region-europe">
+        <label for="region-europe" class="regions">Europe
+      </div>
+      <div class="option-container">
+        <input type="checkbox" name="region" class="region-buttons" value="Oceania" id="region-oceania">
+        <label for="region-oceania" class="regions">Oceania
+      </div>
+    </form>
+    <div id='go'>go!</div>
+  </div>
 	<div class ='quizArea' id='quizArea'>
 		<p>
 		<span id='questionNumber'></span>What is the capital city of <span id='country'></span>?
