@@ -16,13 +16,10 @@ window.onload = function() {
   }
 
   var results = {
-    score: 0,
-    
-    // Insert results
     show: function(questions) {
-      // Insert answer table
-      // Calculate score
+      var score = 0;
       var tableRows = results.table(questions).rows;
+
       questions.forEach(function(question, index) {
         if (question.userAnswer === question.correctAnswer) {
           results.score += 1;
@@ -32,8 +29,8 @@ window.onload = function() {
           tableRows[index].style.color = 'red';
         }
       });
-      document.getElementById('finalScore').textContent = results.score;
-      // Display results
+      document.getElementById('finalScore').textContent = score;
+
       document.getElementById('quizArea').style.display = 'none';
       document.getElementById('resultsArea').style.display = 'block';
     },
@@ -66,7 +63,6 @@ window.onload = function() {
     }
   };
     
-  // Information for updating question
   var question = {
     number: 0,
 
@@ -113,10 +109,9 @@ window.onload = function() {
       document.getElementById("country").textContent = this.name;
       document.getElementById("questionNumber").textContent = this.number + ". ";
 
-      // Display options
       for (var i = 0, len = optionElts.length; i < len; ++i) {
         optionElts[i].textContent = this.options[i];
-        optionElts[i].previousElementSibling.checked=false;
+        optionElts[i].checked=false;
         optionElts[i].addEventListener('click',  clearWarning);
       }
     },
@@ -157,7 +152,6 @@ window.onload = function() {
     });
   }
 
-  // AJAX request for country data in file at url
   function fetchData(url, responseHandler) {
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
@@ -169,7 +163,6 @@ window.onload = function() {
     };
     request.send();
   }
-
 
   fetchData('countries.json', parseJSONResponse);
 };
