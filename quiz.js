@@ -111,7 +111,7 @@ window.onload = function() {
 
       for (var i = 0, len = optionElts.length; i < len; ++i) {
         optionElts[i].textContent = this.options[i];
-        optionElts[i].checked=false;
+        optionElts[i].previousElementSibling.checked=false;
         optionElts[i].addEventListener('click',  clearWarning);
       }
     },
