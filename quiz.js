@@ -21,12 +21,10 @@ window.onload = function() {
     
     // Insert results
     show: function(questions) {
-      // Update getUserAnswers with final answer
-      results.userAnswers.push(questions[quiz.howManyQuestions - 1].userAnswer);
       // Insert answer table
       // Calculate score
-      var tableRows = results.table(questions, quiz.howManyQuestions).childNodes;
-      for (var i = 0; i < quiz.howManyQuestions; ++i) {
+      var tableRows = results.table(questions, questions.length).childNodes;
+      for (var i = 0, len = questions.length; i < len; ++i) {
         if (questions[i].userAnswer === questions[i].correctAnswer) {
           results.score += 1;
           // Color-code table
@@ -130,7 +128,7 @@ window.onload = function() {
       document.getElementById("questionNumber").textContent = this.number + ". ";
 
       // Display options
-      for (var i = 0, len = quiz.howManyOptions; i < len; ++i) {
+      for (var i = 0, len = optionElts.length; i < len; ++i) {
         optionElts[i].textContent = this.options[i];
         optionElts[i].previousElementSibling.checked=false;
         optionElts[i].addEventListener('click',  clearWarning);
@@ -138,66 +136,18 @@ window.onload = function() {
     },
   };
 
-  // Generate all quiz questions using response to ajax request
-  var quiz = {
-    howManyQuestions: 5,
-    howManyOptions: 5,
-
-    answers: [],
-    questions: [],
-    currentQuestion: 0,
-
-    // Check if capital property is present
-    capital: function(country) {
-      if (country.capital.length > 1) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-
-    setRegion: function(allCountries, continent) {
-      var countries = [];
-      // If no continent specified, can use any country
-      if (!continent) {
-        countries = allCountries;
-      } else {
-        // Pick out countries from specific continent
-        allCountries.forEach(
-            function(country, i, allCountries) {
-              if (allCountries[i].region === continent) {
-                countries.push(allCountries[i]);
-              }
-            });
-      }
-      return countries;
-    },
-
-    // Check for duplicate options
-    isDuplicate: function(candidate, options, answer) {
-      // Candidate will become a duplicate if it equals the answer
-      if (candidate === answer) {
-        return true;
-      }
-      // Can't be duplicate if there are no options yet
-      // Must do this before trying to index options below
-      if (options.length === 0) {
-        return false;
-      }
-      // Check for duplicates in options so far
-      for (var i = 0; i < options.length; ++i) {
-        if (candidate === options[i]) {
-          return true;
-        }
-      }
-      return false;
-    },
-  };
-
   function parseJSONResponse(responseText) {
+    var howManyQuestions = 5;
+    var howManyOptions = 5;
+    var region;
     var questionNumber = 1;
     var allCountries = JSON.parse(responseText);
-    var countries = uniqueElementsFrom(allCountries, quiz.howManyQuestions);
+    if (region) {
+      allCountries = allCountries.filter(function(country) {
+        return country.region === region;
+      });
+    }
+    var countries = uniqueElementsFrom(allCountries, howManyQuestions);
 
     var questions = countries.map(function(country, i) {
       return question.clone(country, i + 1, allCountries);
@@ -206,7 +156,7 @@ window.onload = function() {
     questions[questionNumber - 1].render();
     document.getElementById("next").addEventListener('click', function() {
       questions[questionNumber - 1].setUserAnswer();
-      if (questionNumber < quiz.howManyQuestions && questions[questionNumber - 1].userAnswer !== '') {
+      if (questionNumber < howManyQuestions && questions[questionNumber - 1].userAnswer !== '') {
         questionNumber++;
         questions[questionNumber - 1].render();
       }
