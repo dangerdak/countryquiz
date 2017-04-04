@@ -26,11 +26,9 @@ window.onload = function() {
       questions.forEach(function(question, index) {
         if (question.userAnswer === question.correctAnswer) {
           results.score += 1;
-          console.log("tablerow: " + tableRows[index].style);
           tableRows[index].style.color = 'green';
         }
         else {
-          console.log("tablerow: " + tableRows[index].style);
           tableRows[index].style.color = 'red';
         }
       });
