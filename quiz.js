@@ -16,66 +16,54 @@ window.onload = function() {
   }
 
   var results = {
-    userAnswers: [],
     score: 0,
     
     // Insert results
     show: function(questions) {
       // Insert answer table
       // Calculate score
-      var tableRows = results.table(questions, questions.length).childNodes;
-      for (var i = 0, len = questions.length; i < len; ++i) {
-        if (questions[i].userAnswer === questions[i].correctAnswer) {
+      var tableRows = results.table(questions).rows;
+      questions.forEach(function(question, index) {
+        if (question.userAnswer === question.correctAnswer) {
           results.score += 1;
-          // Color-code table
-          tableRows[i].style.color = "green";
-        } else {
-          tableRows[i].style.color = "red";
+          console.log("tablerow: " + tableRows[index].style);
+          tableRows[index].style.color = 'green';
         }
-      }
-      document.getElementById("finalScore").textContent = results.score;
+        else {
+          console.log("tablerow: " + tableRows[index].style);
+          tableRows[index].style.color = 'red';
+        }
+      });
+      document.getElementById('finalScore').textContent = results.score;
       // Display results
-      document.getElementById("quizArea").style.display = "none";
-      document.getElementById("resultsArea").style.display = "block";
+      document.getElementById('quizArea').style.display = 'none';
+      document.getElementById('resultsArea').style.display = 'block';
     },
 
-    table: function(questions, howManyQuestions) {
-      var tableElt = document.createElement("table");
-      var headElt = tableElt.createTHead();
-      var headCell0 = document.createElement("th");
-      var headCell1= document.createElement("th");
-      var headCell2= document.createElement("th");
-      var bodyElt = tableElt.createTBody();
+    table: function(questions) {
+      var bodyElt = document.getElementById('results-body');
       var rowElt;
       var cellElt0;
       var cellElt1;
       var cellElt2;
-      
-      headCell0.textContent = "Country";
-      headCell1.textContent = "Capital";
-      headCell2.textContent = "Your Answer";
-      headElt.appendChild(headCell0);
-      headElt.appendChild(headCell1);
-      headElt.appendChild(headCell2);
 
-      for (var i = 0; i < howManyQuestions; ++i) {
+      questions.forEach(function(question) {
         rowElt = document.createElement("tr");
         cellElt0 = document.createElement("td");
         cellElt1 = document.createElement("td");
         cellElt2 = document.createElement("td");
 
-        cellElt0.textContent = questions[i].name;
-        cellElt1.textContent = questions[i].correctAnswer;
-        cellElt2.textContent = questions[i].userAnswer;
+        cellElt0.textContent = question.name;
+        cellElt1.textContent = question.correctAnswer;
+        cellElt2.textContent = question.userAnswer;
 
         rowElt.appendChild(cellElt0);
         rowElt.appendChild(cellElt1);
         rowElt.appendChild(cellElt2);
         rowElt.classList.add('table-row');
+
         bodyElt.appendChild(rowElt);
-        tableElt.classList.add('table');
-      }
-      document.getElementById("resultsArea").appendChild(tableElt);
+      });
       return bodyElt;
     }
   };
