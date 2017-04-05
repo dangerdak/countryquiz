@@ -1,4 +1,4 @@
-##Capital Cities Quiz
+## Capital Cities Quiz
 
 Multiple choice quiz on the capital cities of countries worldwide. Made with
 HTML, CSS and vanilla JavaScript, initially while following the [How to Learn JavaScript
@@ -10,7 +10,7 @@ Allows selection of regions to be tested on:
 * Americas
 * Africa
 * Europe
-* Oceania
+* Oceania  
 Or any combination of the above!
 
 _Coming soon:_ At least 2 difficulty levels, making the answers harder to
