@@ -30,8 +30,10 @@ input:checked + label{
 }
 #next, #go {
         float: right;
-        border: 1px dotted #4f8585;
         padding: 0 0.5em;
+}
+#next:hover, #go:hover {
+        color: #4f8585;
 }
 #warning {
         margin-top: 1em;

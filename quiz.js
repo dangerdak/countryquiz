@@ -86,12 +86,9 @@ window.onload = function() {
     options: [],
 
     setUserAnswer: function() {
-      var buttons = document.getElementsByClassName("optionButtons");
-      for (var i = 0; i < buttons.length; ++i) {
-        if (buttons[i].checked) {
-          this.userAnswer = this.options[i];
-        }
-      }
+      var id = checkedBoxes('city')[0].id;
+      var index = Number(id.replace('option', ''));
+      this.userAnswer = this.options[index];
     },
 
     clone: function(obj, n, all) {
