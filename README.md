@@ -10,7 +10,8 @@ Allows selection of regions to be tested on:
 * Americas
 * Africa
 * Europe
-* Oceania  
+* Oceania
+
 Or any combination of the above!
 
 _Coming soon:_ At least 2 difficulty levels, making the answers harder to
